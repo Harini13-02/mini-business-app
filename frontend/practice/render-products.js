@@ -14,8 +14,8 @@ function prepareProductTableRows(products){
     return products.map(product=>{
         return{
             id: product.id,
-            label: product.sku + " - " + product.name,
-            priceText: "$" + product.price,
+            label: formatProductLabel(product),
+            priceText: "₹" + product.price,
             stockText: product.stockQty + " units",
             stockStatus: product.stockQty < 50 ? "Low Stock" : "Available" 
         };

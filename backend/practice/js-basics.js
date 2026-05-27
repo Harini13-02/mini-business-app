@@ -37,7 +37,7 @@ function validateProduct(product){
     if(product.name === ""){
         errors.push("Name is required");
     }
-    if(product.price < 0){
+    if(product.price <= 0){
         errors.push("Price must be greater than zero");
     }
     if(product.stockQty < 0){
@@ -55,10 +55,10 @@ const result = validateProduct({
 console.log(result);
 
 function calculateLineTotal(quantity, rate){
- if(quantity <0){
+ if(quantity <= 0){
     return "Quantity must be greater then zero";
  }
- if(rate <0){
+ if(rate <= 0){
     return "Rate must be greater then zero";
  }
  return quantity * rate;
