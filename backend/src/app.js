@@ -1,7 +1,7 @@
 const express = require('express');
-
+const cors = require('cors');
 const app = express();
-
+app.use(cors());
 app.use(express.json());
 
 // In-memory product data
@@ -53,7 +53,7 @@ app.post('/api/products', (req, res) => {
   const { sku, name, price, stockQty } = req.body;
 
   // Check missing fields
-  if (!sku || !name || !price || !stockQty) {
+  if (!sku || !name || price === undefined || stockQty === undefined) {
     return res.status(400).json({
       message: 'sku, name, price, and stockQty are required'
     });
