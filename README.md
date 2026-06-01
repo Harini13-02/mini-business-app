@@ -49,3 +49,5 @@ This application manages a simplified business workflow:
 - Automated tests
 - GitHub Actions
 - Hostinger deployment
+
+
