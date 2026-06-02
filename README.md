@@ -41,6 +41,9 @@ This application manages a simplified business workflow:
 
 - PostgreSQL
 
+## Prisma Setup
+ - This project uses Prisma ORM with PostgreSQL.
+
 ### Engineering Workflow
 
 - Git
