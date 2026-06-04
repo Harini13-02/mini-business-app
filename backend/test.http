@@ -43,3 +43,72 @@ Content-Type: application/json
   "price": 60,
   "stockQty": 25
 }
+
+##################################################
+# CUSTOMER API TESTS
+##################################################
+
+### Create Customer
+POST {{baseUrl}}/api/customers
+Content-Type: application/json
+
+{
+  "code": "C003",
+  "name": "ABC Stores",
+  "phone": "9876543210",
+  "email": "accounts@abcstores.com"
+}
+
+### List Customers
+GET {{baseUrl}}/api/customers
+
+### Get Customer By ID
+GET {{baseUrl}}/api/customers/1
+
+### Get Invalid Customer ID
+GET {{baseUrl}}/api/customers/999
+
+### Create Duplicate Customer Code
+POST {{baseUrl}}/api/customers
+Content-Type: application/json
+
+{
+  "code": "C001",
+  "name": "Duplicate Customer"
+}
+
+### Create Customer With Missing Name
+POST {{baseUrl}}/api/customers
+Content-Type: application/json
+
+{
+  "code": "C002"
+}
+
+### Create Another Customer
+POST {{baseUrl}}/api/customers
+Content-Type: application/json
+
+{
+  "code": "C002",
+  "name": "XYZ Traders",
+  "phone": "9123456780",
+  "email": "contact@xyztraders.com"
+}
+
+### Update Customer
+PATCH {{baseUrl}}/api/customers/1
+Content-Type: application/json
+
+{
+  "code": "C001",
+  "name": "ABC Stores Updated",
+  "phone": "9876543210",
+  "email": "admin@abcstores.com"
+}
+
+### Delete Customer
+DELETE {{baseUrl}}/api/customers/1
+
+### Verify Customer Is Not In Active List
+GET {{baseUrl}}/api/customers

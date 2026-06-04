@@ -1,8 +1,10 @@
 const express = require('express');
 const cors = require('cors');
 
-const app = express();
 const productRoutes = require('./routes/product.routes');
+const customerRoutes = require('./routes/customer.routes');
+
+const app = express();
 
 // Middleware
 app.use(cors());
@@ -15,6 +17,9 @@ app.get('/health', (req, res) => {
 
 // Product Routes
 app.use('/api/products', productRoutes);
+
+// Customer Routes
+app.use('/api/customers', customerRoutes);
 
 // 404 Handler
 app.use((req, res) => {

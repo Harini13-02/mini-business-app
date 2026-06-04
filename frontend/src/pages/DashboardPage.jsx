@@ -2,89 +2,84 @@ export default function DashboardPage() {
   const stats = [
     {
       title: "Products",
-      value: "3",
-      icon: "📦",
-      color: "bg-blue-500",
+      value: "03",
     },
     {
       title: "Customers",
       value: "25",
-      icon: "👥",
-      color: "bg-emerald-500",
     },
     {
       title: "Sales Orders",
       value: "18",
-      icon: "🛒",
-      color: "bg-purple-500",
-    },
-    {
-      title: "Stock Available",
-      value: "620",
-      icon: "📊",
-      color: "bg-orange-500",
     },
   ];
 
   return (
-    <div className="space-y-8">
-      {/* Welcome Section */}
-      <div className="rounded-3xl bg-gradient-to-r from-blue-700 to-blue-500 p-8 text-white shadow-xl">
-        <h2 className="text-4xl font-bold">
-          Business Dashboard
+    <div className="space-y-10">
+      {/* Dashboard Heading */}
+      <div>
+        <h2 
+          style={{
+            color: "#000000",
+            fontSize: "32px",
+            fontWeight: "bold",
+            }}
+          >
+            Dashboard
         </h2>
 
-        <p className="mt-2 text-blue-100">
-          Manage products, customers and sales efficiently.
+        <p className="mt-3 text-lg text-slate-600">
+          Elegant overview of your business performance.
         </p>
       </div>
 
-      {/* Statistics */}
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+      {/* Statistics Cards */}
+      <div className="grid gap-8 md:grid-cols-3">
         {stats.map((item) => (
           <div
             key={item.title}
-            className="rounded-3xl bg-white p-6 shadow-lg transition-all hover:-translate-y-1 hover:shadow-2xl"
+            className="
+              relative
+              overflow-hidden
+              rounded-[32px]
+              border
+              border-violet-200
+              bg-gradient-to-br
+              from-white
+              via-[#faf7ff]
+              to-[#f2e8ff]
+              p-8
+              min-h-[280px]
+              flex
+              flex-col
+              justify-between
+              shadow-xl
+              hover:shadow-2xl
+              hover:-translate-y-1
+              transition-all
+              duration-300
+            "
           >
-            <div
-              className={`w-14 h-14 ${item.color} rounded-2xl flex items-center justify-center text-2xl`}
-            >
-              {item.icon}
+            {/* Soft Glow */}
+            <div className="absolute -top-10 -right-10 h-32 w-32 rounded-full bg-violet-300/20 blur-3xl"></div>
+
+            <div>
+              <h3 className="text-xl font-bold text-slate-800 tracking-wide">
+                {item.title}
+              </h3>
             </div>
 
-            <h3 className="mt-4 text-slate-500">
-              {item.title}
-            </h3>
+            <div>
+              <p className="text-7xl font-bold text-slate-900">
+                {item.value}
+              </p>
 
-            <p className="mt-2 text-4xl font-bold text-slate-800">
-              {item.value}
-            </p>
+              <p className="mt-3 text-sm text-slate-500">
+                Active records
+              </p>
+            </div>
           </div>
         ))}
-      </div>
-
-      {/* Recent Products */}
-      <div className="rounded-3xl bg-white p-6 shadow-lg">
-        <h3 className="mb-4 text-xl font-semibold text-slate-800">
-          Recent Products
-        </h3>
-
-        <div className="grid gap-4 md:grid-cols-3">
-          <div className="rounded-2xl border p-4">
-            <h4 className="font-semibold">Notebook</h4>
-            <p className="text-slate-500">₹50</p>
-          </div>
-
-          <div className="rounded-2xl border p-4">
-            <h4 className="font-semibold">Pen</h4>
-            <p className="text-slate-500">₹10</p>
-          </div>
-
-          <div className="rounded-2xl border p-4">
-            <h4 className="font-semibold">Marker</h4>
-            <p className="text-slate-500">₹30</p>
-          </div>
-        </div>
       </div>
     </div>
   );
