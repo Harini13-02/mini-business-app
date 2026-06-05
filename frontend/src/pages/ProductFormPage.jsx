@@ -85,7 +85,12 @@ function ProductFormPage() {
     <div>
       <div className="mb-4 flex items-center justify-between">
         <div>
-          <h2 className="text-lg font-semibold text-gray-900">
+          <h2  style={{
+              color: "#000000",
+              fontSize: "32px",
+              fontWeight: "bold",
+            }}
+          >
             Add Product
           </h2>
 
@@ -95,10 +100,10 @@ function ProductFormPage() {
         </div>
 
         <Link
-          to="/products"
-          className="text-sm font-medium text-gray-600 hover:text-gray-900"
+         to="/products"
+         className="rounded-md border px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100"
         >
-          Back to Products
+         Back to Products
         </Link>
       </div>
 

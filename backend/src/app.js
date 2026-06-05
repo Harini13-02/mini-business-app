@@ -4,37 +4,32 @@ const cors = require('cors');
 const productRoutes = require('./routes/product.routes');
 const customerRoutes = require('./routes/customer.routes');
 
+const notFound = require('./middleware/notFound');
+const errorHandler = require('./middleware/errorHandler');
+
 const app = express();
 
-// Middleware
+/* -------------------- MIDDLEWARE -------------------- */
+
 app.use(cors());
 app.use(express.json());
 
-// Health Check API
+/* -------------------- HEALTH CHECK -------------------- */
+
 app.get('/health', (req, res) => {
-  res.json({ status: 'ok' });
+  res.json({
+    status: 'ok'
+  });
 });
 
-// Product Routes
-app.use('/api/products', productRoutes);
+/* -------------------- ROUTES -------------------- */
 
-// Customer Routes
+app.use('/api/products', productRoutes);
 app.use('/api/customers', customerRoutes);
 
-// 404 Handler
-app.use((req, res) => {
-  res.status(404).json({
-    message: 'Route not found'
-  });
-});
+/* -------------------- ERROR HANDLERS -------------------- */
 
-// Global Error Handler
-app.use((err, req, res, next) => {
-  const statusCode = err.statusCode || 500;
-
-  res.status(statusCode).json({
-    message: err.message || 'Internal server error'
-  });
-});
+app.use(notFound);
+app.use(errorHandler);
 
 module.exports = app;
