@@ -1,4 +1,4 @@
-@baseUrl = http://localhost:3000
+@baseUrl = http://localhost:5000
 
 ### Health check
 GET {{baseUrl}}/health
@@ -113,3 +113,133 @@ DELETE {{baseUrl}}/api/customers/1
 ### Verify Customer Is Not In Active List
 GET {{baseUrl}}/api/customers
 
+##################################################
+
+# SALES ORDER API TESTS
+
+##################################################
+
+### List Sales Orders
+
+GET {{baseUrl}}/api/sales-orders
+
+### Get Sales Order By ID
+
+GET {{baseUrl}}/api/sales-orders/1
+
+### Get Invalid Sales Order ID
+
+GET {{baseUrl}}/api/sales-orders/999
+
+### Create Valid Sales Order
+
+POST {{baseUrl}}/api/sales-orders
+Content-Type: application/json
+
+{
+"customerId": 1,
+"items": [
+{
+"productId": 1,
+"quantity": 2,
+"rate": 50
+},
+{
+"productId": 2,
+"quantity": 3,
+"rate": 10
+}
+]
+}
+
+### Create Sales Order - Missing Customer
+
+POST {{baseUrl}}/api/sales-orders
+Content-Type: application/json
+
+{
+"items": [
+{
+"productId": 1,
+"quantity": 2,
+"rate": 50
+}
+]
+}
+
+### Create Sales Order - Empty Items
+
+POST {{baseUrl}}/api/sales-orders
+Content-Type: application/json
+
+{
+"customerId": 1,
+"items": []
+}
+
+### Create Sales Order - Invalid Product
+
+POST {{baseUrl}}/api/sales-orders
+Content-Type: application/json
+
+{
+"customerId": 1,
+"items": [
+{
+"productId": 999,
+"quantity": 2,
+"rate": 50
+}
+]
+}
+
+### Create Sales Order - Invalid Quantity
+
+POST {{baseUrl}}/api/sales-orders
+Content-Type: application/json
+
+{
+"customerId": 1,
+"items": [
+{
+"productId": 1,
+"quantity": 0,
+"rate": 50
+}
+]
+}
+
+### Create Sales Order - Invalid Rate
+
+POST {{baseUrl}}/api/sales-orders
+Content-Type: application/json
+
+{
+"customerId": 1,
+"items": [
+{
+"productId": 1,
+"quantity": 2,
+"rate": 0
+}
+]
+}
+
+### Create Sales Order - Customer Not Found
+
+POST {{baseUrl}}/api/sales-orders
+Content-Type: application/json
+
+{
+"customerId": 999,
+"items": [
+{
+"productId": 1,
+"quantity": 2,
+"rate": 50
+}
+]
+}
+### Confirm Sales Order
+
+POST {{baseUrl}}/api/sales-orders/1/confirm

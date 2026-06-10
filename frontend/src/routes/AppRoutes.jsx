@@ -5,6 +5,8 @@ import ProductFormPage from '../pages/ProductFormPage';
 import CustomersPage from '../pages/CustomersPage';
 import CustomerFormPage from '../pages/CustomerFormPage';
 import SalesOrdersPage from '../pages/SalesOrdersPage';
+import SalesOrderCreatePage from '../pages/SalesOrderCreatePage';
+import SalesOrderDetailPage from '../pages/SalesOrderDetailPage';
 
 function AppRoutes() {
 return (
@@ -17,6 +19,8 @@ return (
     <Route path="/customers/new" element={<CustomerFormPage />} />
     <Route path="/customers/edit/:id" element={<CustomerFormPage />}/>
     <Route path="/sales-orders" element={<SalesOrdersPage />} />
+    <Route path="/sales-orders/new" element={<SalesOrderCreatePage />} />
+    <Route path="/sales-orders/:id" element={<SalesOrderDetailPage />} />
 </Routes>
 );
 }

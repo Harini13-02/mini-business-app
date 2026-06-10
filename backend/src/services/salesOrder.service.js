@@ -49,7 +49,259 @@ async function getSalesOrderById(id) {
   });
 }
 
+function calculateLineTotal(quantity, rate) {
+  return Number(quantity) * Number(rate);
+}
+
+function validateOrderInput(data) {
+  if (!data.customerId) {
+    const error = new Error('Customer is required');
+    error.statusCode = 400;
+    throw error;
+  }
+
+  if (!Array.isArray(data.items) || data.items.length === 0) {
+    const error = new Error('Order must have at least one item');
+    error.statusCode = 400;
+    throw error;
+  }
+
+  data.items.forEach((item, index) => {
+    if (!item.productId) {
+      const error = new Error(
+        `Product is required for item ${index + 1}`
+      );
+      error.statusCode = 400;
+      throw error;
+    }
+
+    if (Number(item.quantity) <= 0) {
+      const error = new Error(
+        `Quantity must be greater than zero for item ${index + 1}`
+      );
+      error.statusCode = 400;
+      throw error;
+    }
+
+    if (Number(item.rate) <= 0) {
+      const error = new Error(
+        `Rate must be greater than zero for item ${index + 1}`
+      );
+      error.statusCode = 400;
+      throw error;
+    }
+  });
+}
+
+async function generateOrderNo() {
+  const count = await prisma.salesOrder.count();
+  return `SO-${String(count + 1).padStart(4, '0')}`;
+}
+
+async function createSalesOrder(data) {
+  validateOrderInput(data);
+
+  const customer = await prisma.customer.findUnique({
+    where: {
+      id: Number(data.customerId)
+    }
+  });
+
+  if (!customer) {
+    const error = new Error('Customer not found');
+    error.statusCode = 400;
+    throw error;
+  }
+
+  const productIds = data.items.map(item =>
+    Number(item.productId)
+  );
+
+  const products = await prisma.product.findMany({
+    where: {
+      id: {
+        in: productIds
+      },
+      isActive: true
+    }
+  });
+
+  if (products.length !== productIds.length) {
+    const error = new Error('One or more products are invalid');
+    error.statusCode = 400;
+    throw error;
+  }
+
+  // Stock Validation
+  for (const item of data.items) {
+    const product = products.find(
+      product => product.id === Number(item.productId)
+    );
+
+    if (Number(item.quantity) > product.stockQty) {
+      const error = new Error(
+        `${product.name} has only ${product.stockQty} items available in stock`
+      );
+
+      error.statusCode = 400;
+      throw error;
+    }
+  }
+
+  const orderItems = data.items.map(item => {
+    const quantity = Number(item.quantity);
+    const rate = Number(item.rate);
+
+    return {
+      productId: Number(item.productId),
+      quantity,
+      rate,
+      lineTotal: calculateLineTotal(quantity, rate)
+    };
+  });
+
+  const totalAmount = orderItems.reduce((sum, item) => {
+    return sum + Number(item.lineTotal);
+  }, 0);
+
+  const orderNo = await generateOrderNo();
+
+  return prisma.salesOrder.create({
+    data: {
+      orderNo,
+      customerId: Number(data.customerId),
+      status: 'DRAFT',
+      totalAmount,
+      items: {
+        create: orderItems
+      }
+    },
+    include: {
+      customer: true,
+      items: {
+        include: {
+          product: true
+        }
+      }
+    }
+  });
+}
+async function confirmSalesOrder(id) {
+  const orderId = Number(id);
+
+  return prisma.$transaction(async (tx) => {
+    const order = await tx.salesOrder.findUnique({
+      where: { id: orderId },
+      include: {
+        items: {
+          include: {
+            product: true
+          }
+        },
+        customer: true
+      }
+    });
+
+    if (!order) {
+      const error = new Error('Sales order not found');
+      error.statusCode = 404;
+      throw error;
+    }
+
+    if (order.status !== 'DRAFT') {
+      const error = new Error(
+        'Only draft orders can be confirmed'
+      );
+      error.statusCode = 400;
+      throw error;
+    }
+
+    if (!order.items || order.items.length === 0) {
+      const error = new Error(
+        'Cannot confirm an order without items'
+      );
+      error.statusCode = 400;
+      throw error;
+    }
+
+    for (const item of order.items) {
+      if (item.quantity <= 0) {
+        const error = new Error(
+          'Order item quantity must be greater than zero'
+        );
+
+        error.statusCode = 400;
+        throw error;
+      }
+
+      if (!item.product) {
+        const error = new Error(
+          'Order item product not found'
+        );
+
+        error.statusCode = 400;
+        throw error;
+      }
+
+      if (item.product.stockQty < item.quantity) {
+        const error = new Error(
+          `Insufficient stock for product ${item.product.name}`
+        );
+
+        error.statusCode = 400;
+        throw error;
+      }
+    }
+
+    for (const item of order.items) {
+      await tx.product.update({
+        where: {
+          id: item.productId
+        },
+        data: {
+          stockQty: {
+            decrement: item.quantity
+          }
+        }
+      });
+
+      await tx.stockMovement.create({
+        data: {
+          productId: item.productId,
+          movementType: 'OUT',
+          quantity: item.quantity,
+          referenceType: 'SALES_ORDER',
+          referenceId: order.id
+        }
+      });
+    }
+
+    const confirmedOrder =
+      await tx.salesOrder.update({
+        where: {
+          id: order.id
+        },
+        data: {
+          status: 'CONFIRMED'
+        },
+        include: {
+          customer: true,
+          items: {
+            include: {
+              product: true
+            }
+          }
+        }
+      });
+
+    return confirmedOrder;
+  });
+}
+
 module.exports = {
   getSalesOrders,
-  getSalesOrderById
+  getSalesOrderById,
+  createSalesOrder,
+  calculateLineTotal,
+  confirmSalesOrder
 };

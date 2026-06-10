@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { getSalesOrders } from '../api/salesOrderApi';
 import Card from '../components/ui/Card';
-import Button from '../components/ui/Button';
 
 function formatCurrency(value) {
   return `Rs. ${Number(value || 0).toFixed(2)}`;
@@ -52,9 +51,12 @@ function SalesOrdersPage() {
           </p>
         </div>
 
-        <Button disabled>
-          New Sales Order
-        </Button>
+        <Link
+          to="/sales-orders/new"
+          className="rounded-md bg-gray-900 px-4 py-2 text-sm font-medium text-white hover:bg-gray-700"
+        >
+          Create Sales Order
+        </Link>
       </div>
 
       <Card>
@@ -97,7 +99,10 @@ function SalesOrdersPage() {
 
               <tbody>
                 {orders.map((order) => (
-                  <tr key={order.id} className="border-b last:border-0">
+                  <tr
+                    key={order.id}
+                    className="border-b last:border-0"
+                  >
                     <td className="px-3 py-2 font-medium text-gray-900">
                       {order.orderNo}
                     </td>

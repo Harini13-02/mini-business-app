@@ -11,11 +11,50 @@ async function handleResponse(response) {
 }
 
 export async function getSalesOrders() {
-  const response = await fetch(`${API_BASE_URL}/api/sales-orders`);
+  const response = await fetch(
+    `${API_BASE_URL}/api/sales-orders`
+  );
+
   return handleResponse(response);
 }
 
 export async function getSalesOrderById(id) {
-  const response = await fetch(`${API_BASE_URL}/api/sales-orders/${id}`);
+  const response = await fetch(
+    `${API_BASE_URL}/api/sales-orders/${id}`
+  );
+
+  return handleResponse(response);
+}
+
+export async function createSalesOrder(data) {
+  const response = await fetch(
+    `${API_BASE_URL}/api/sales-orders`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    }
+  );
+
+  return handleResponse(response);
+}
+export async function getSalesOrder(id) {
+  const response = await fetch(
+    `${API_BASE_URL}/api/sales-orders/${id}`
+  );
+
+  return handleResponse(response);
+}
+
+export async function confirmSalesOrder(id) {
+  const response = await fetch(
+    `${API_BASE_URL}/api/sales-orders/${id}/confirm`,
+    {
+      method: 'POST'
+    }
+  );
+
   return handleResponse(response);
 }
