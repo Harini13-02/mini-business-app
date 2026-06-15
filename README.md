@@ -41,6 +41,9 @@ This application manages a simplified business workflow:
 
 - PostgreSQL
 
+## Prisma Setup
+ - This project uses Prisma ORM with PostgreSQL.
+
 ### Engineering Workflow
 
 - Git
@@ -50,4 +53,22 @@ This application manages a simplified business workflow:
 - GitHub Actions
 - Hostinger deployment
 
+## Week 3 Business Flow Test Scenarios
 
+### Backend API tests
+
+```powershell
+cd backend
+npm test
+```
+
+Covered API scenarios:
+
+- Health endpoint works
+- Product can be created
+- Customer can be created
+- Draft sales order can be created
+- Sales order can be confirmed
+- Product stock reduces after confirmation
+- Double confirmation is blocked
+- Insufficient stock is rejected

@@ -4,33 +4,31 @@ import { Link, useNavigate } from "react-router-dom";
 import Card from "../components/ui/Card";
 
 import {
-  getProducts,
-  deleteProduct,
-} from "../api/productApi";
+  getCustomers,
+  deleteCustomer,
+} from "../api/customerApi";
 
-function formatPrice(price) {
-  return `₹${Number(price).toFixed(2)}`;
-}
-
-function ProductsPage() {
+function CustomersPage() {
   const navigate = useNavigate();
 
-  const [products, setProducts] = useState([]);
+  const [customers, setCustomers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [selectedProduct, setSelectedProduct] =
+
+  const [selectedCustomer, setSelectedCustomer] =
     useState(null);
 
-  async function loadProducts() {
+  async function loadCustomers() {
     try {
       setLoading(true);
       setError("");
 
-      const data = await getProducts();
-      setProducts(data);
+      const data = await getCustomers();
+      setCustomers(data);
     } catch (err) {
       setError(
-        err.message || "Failed to load products"
+        err.message ||
+          "Failed to load customers"
       );
     } finally {
       setLoading(false);
@@ -47,29 +45,30 @@ function ProductsPage() {
     }
 
     try {
-      await deleteProduct(id);
+      await deleteCustomer(id);
 
-      setProducts((currentProducts) =>
-        currentProducts.filter(
-          (product) => product.id !== id
+      setCustomers((current) =>
+        current.filter(
+          (customer) =>
+            customer.id !== id
         )
       );
 
-      setSelectedProduct(null);
+      setSelectedCustomer(null);
     } catch (err) {
       alert(
-        err.message || "Failed to delete product"
+        err.message ||
+          "Failed to delete customer"
       );
     }
   }
 
   useEffect(() => {
-    loadProducts();
+    loadCustomers();
   }, []);
 
   return (
     <div className="space-y-6">
-
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
@@ -80,27 +79,27 @@ function ProductsPage() {
               fontWeight: "bold",
             }}
           >
-            Manage Products
+            Manage Customers
           </h1>
 
           <p className="mt-1 text-sm text-gray-600">
-            View, update and manage products.
+            View, update and manage customers.
           </p>
         </div>
 
         <Link
-          to="/products/new"
+          to="/customers/new"
           className="rounded-md bg-gray-900 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-black transition"
         >
-          Add Product
+          Add Customer
         </Link>
       </div>
 
-      {/* Products Table */}
+      {/* Table */}
       <Card>
         {loading ? (
           <p className="text-sm text-gray-500">
-            Loading products...
+            Loading customers...
           </p>
         ) : error ? (
           <div
@@ -109,14 +108,14 @@ function ProductsPage() {
           >
             {error}
           </div>
-        ) : products.length === 0 ? (
+        ) : customers.length === 0 ? (
           <div className="rounded-md border border-dashed p-6 text-center">
             <p className="text-sm font-medium text-gray-900">
-              No products found
+              No customers found
             </p>
 
             <p className="mt-1 text-sm text-gray-500">
-              Create your first product.
+              Create your first customer.
             </p>
           </div>
         ) : (
@@ -125,57 +124,58 @@ function ProductsPage() {
               <thead>
                 <tr className="border-b bg-violet-50">
                   <th className="px-4 py-4 text-sm font-extrabold text-black uppercase">
-                    SKU
+                    Code
                   </th>
 
                   <th className="px-4 py-4 text-sm font-extrabold text-black uppercase">
-                    Product Name
+                    Customer Name
                   </th>
 
                   <th className="px-4 py-4 text-sm font-extrabold text-black uppercase">
-                    Price
+                    Phone
                   </th>
 
                   <th className="px-4 py-4 text-sm font-extrabold text-black uppercase">
-                    Stock
+                    Email
                   </th>
                 </tr>
               </thead>
 
               <tbody>
-                {products.map((product) => (
+                {customers.map((customer) => (
                   <tr
-                    key={product.id}
+                    key={customer.id}
                     onClick={() =>
-                      setSelectedProduct(
-                        selectedProduct === product.id
+                      setSelectedCustomer(
+                        selectedCustomer ===
+                          customer.id
                           ? null
-                          : product.id
+                          : customer.id
                       )
                     }
                     className="relative cursor-pointer border-b transition hover:bg-violet-50"
                   >
                     <td className="px-4 py-4 font-semibold text-gray-900">
-                      {product.sku}
+                      {customer.code}
                     </td>
 
                     <td className="relative px-4 py-4 text-gray-800">
-                      {product.name}
+                      {customer.name}
 
-                      {selectedProduct === product.id && (
+                      {selectedCustomer ===
+                        customer.id && (
                         <div className="absolute left-0 top-12 z-50 w-52 overflow-hidden rounded-xl border border-gray-200 bg-white shadow-xl">
-
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
 
                               navigate(
-                                `/products/edit/${product.id}`
+                                `/customers/edit/${customer.id}`
                               );
                             }}
                             className="w-full px-4 py-3 text-left text-sm font-medium text-black hover:bg-gray-100"
                           >
-                            ✏️ Update Product
+                            ✏️ Update Customer
                           </button>
 
                           <button
@@ -183,25 +183,24 @@ function ProductsPage() {
                               e.stopPropagation();
 
                               handleDelete(
-                                product.id,
-                                product.name
+                                customer.id,
+                                customer.name
                               );
                             }}
                             className="w-full px-4 py-3 text-left text-sm font-medium text-red-600 hover:bg-red-50"
                           >
-                            🗑 Delete Product
+                            🗑 Delete Customer
                           </button>
-
                         </div>
                       )}
                     </td>
 
                     <td className="px-4 py-4 text-gray-700">
-                      {formatPrice(product.price)}
+                      {customer.phone || "-"}
                     </td>
 
                     <td className="px-4 py-4 text-gray-700">
-                      {product.stockQty}
+                      {customer.email || "-"}
                     </td>
                   </tr>
                 ))}
@@ -214,4 +213,4 @@ function ProductsPage() {
   );
 }
 
-export default ProductsPage;
+export default CustomersPage;
