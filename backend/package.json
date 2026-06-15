@@ -7,8 +7,7 @@
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",
     "test": "vitest run",
-     "test:watch": "vitest"
-
+    "test:watch": "vitest"
   },
   "keywords": [],
   "author": "",
@@ -25,6 +24,7 @@
   },
   "devDependencies": {
     "nodemon": "^3.1.14",
+    "supertest": "^7.2.2",
     "vitest": "^4.1.8"
   }
 }
