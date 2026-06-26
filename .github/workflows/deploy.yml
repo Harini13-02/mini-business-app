@@ -1,0 +1,21 @@
+name: Deployment Placeholder
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    name: Deployment
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Deployment Placeholder
+        run: |
+          echo "=================================="
+          echo "Deployment workflow placeholder"
+          echo "Replace this with your deployment"
+          echo "Render / Railway / Vercel / Azure"
+          echo "=================================="

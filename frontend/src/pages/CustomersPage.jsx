@@ -56,7 +56,7 @@ function CustomersPage() {
 
       setSelectedCustomer(null);
     } catch (err) {
-      alert(
+      setError(
         err.message ||
           "Failed to delete customer"
       );
@@ -170,7 +170,7 @@ function CustomersPage() {
                               e.stopPropagation();
 
                               navigate(
-                                `/customers/edit/${customer.id}`
+                                `/customers/${customer.id}/edit`
                               );
                             }}
                             className="w-full px-4 py-3 text-left text-sm font-medium text-black hover:bg-gray-100"

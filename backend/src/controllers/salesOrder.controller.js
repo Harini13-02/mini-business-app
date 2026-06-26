@@ -47,20 +47,32 @@ async function getSalesOrder(req, res, next) {
 async function createSalesOrder(req, res, next) {
   try {
     const salesOrder = await salesOrderService.createSalesOrder(req.body);
+
     res.status(201).json(salesOrder);
-} catch (error) {
-   next(error);
- }
+  } catch (error) {
+    next(error);
+  }
 }
+
 async function confirmSalesOrder(
   req,
   res,
   next
 ) {
   try {
+    const id = Number(req.params.id);
+
+    if (!Number.isInteger(id)) {
+      const error = new Error(
+        'Invalid sales order id'
+      );
+      error.statusCode = 400;
+      throw error;
+    }
+
     const order =
       await salesOrderService.confirmSalesOrder(
-        req.params.id
+        id
       );
 
     res.json(order);
@@ -74,5 +86,4 @@ module.exports = {
   getSalesOrder,
   createSalesOrder,
   confirmSalesOrder
-
 };

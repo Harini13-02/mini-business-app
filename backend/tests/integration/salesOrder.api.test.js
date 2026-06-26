@@ -1,11 +1,17 @@
 const request = require('supertest');
 const app = require('../../src/app');
 const prisma = require('../../src/lib/prisma');
+const { getAdminToken } = require('../helpers/auth');
 
 describe('Sales order API flow', () => {
+  let token;
   let product;
   let customer;
   let salesOrder;
+
+  beforeAll(async () => {
+    token = await getAdminToken();
+  });
 
   afterAll(async () => {
     await prisma.$disconnect();
@@ -14,6 +20,7 @@ describe('Sales order API flow', () => {
   test('creates a product', async () => {
     const response = await request(app)
       .post('/api/products')
+      .set('Authorization', `Bearer ${token}`)
       .send({
         sku: `TEST-PROD-${Date.now()}`,
         name: 'Test Notebook',
@@ -31,6 +38,7 @@ describe('Sales order API flow', () => {
   test('creates a customer', async () => {
     const response = await request(app)
       .post('/api/customers')
+      .set('Authorization', `Bearer ${token}`)
       .send({
         code: `TEST-CUST-${Date.now()}`,
         name: 'Test Customer',
@@ -47,6 +55,7 @@ describe('Sales order API flow', () => {
   test('creates a draft sales order', async () => {
     const response = await request(app)
       .post('/api/sales-orders')
+      .set('Authorization', `Bearer ${token}`)
       .send({
         customerId: customer.id,
         items: [
@@ -69,13 +78,16 @@ describe('Sales order API flow', () => {
   test('confirms the sales order and reduces stock', async () => {
     const response = await request(app)
       .post(`/api/sales-orders/${salesOrder.id}/confirm`)
+      .set('Authorization', `Bearer ${token}`)
       .send();
 
     expect(response.status).toBe(200);
     expect(response.body.status).toBe('CONFIRMED');
 
     const updatedProduct = await prisma.product.findUnique({
-      where: { id: product.id }
+      where: {
+        id: product.id
+      }
     });
 
     expect(updatedProduct.stockQty).toBe(8);
@@ -84,48 +96,57 @@ describe('Sales order API flow', () => {
   test('does not allow double confirmation', async () => {
     const response = await request(app)
       .post(`/api/sales-orders/${salesOrder.id}/confirm`)
+      .set('Authorization', `Bearer ${token}`)
       .send();
 
     expect(response.status).toBe(400);
     expect(response.body.message).toMatch(/draft|already|confirmed/i);
   });
+
   test('rejects order creation when stock is insufficient', async () => {
-  const lowStockProductResponse = await request(app)
-    .post('/api/products')
-    .send({
-      sku: `TEST-LOW-${Date.now()}`,
-      name: 'Low Stock Product',
-      price: 100,
-      stockQty: 1
-    });
+    const lowStockProductResponse = await request(app)
+      .post('/api/products')
+      .set('Authorization', `Bearer ${token}`)
+      .send({
+        sku: `TEST-LOW-${Date.now()}`,
+        name: 'Low Stock Product',
+        price: 100,
+        stockQty: 1
+      });
 
-  const lowStockProduct = lowStockProductResponse.body;
+    expect(lowStockProductResponse.status).toBe(201);
 
-  const customerResponse = await request(app)
-    .post('/api/customers')
-    .send({
-      code: `TEST-LOW-CUST-${Date.now()}`,
-      name: 'Low Stock Customer',
-      phone: '9876543210',
-      email: 'low@test.com'
-    });
+    const lowStockProduct = lowStockProductResponse.body;
 
-  const testCustomer = customerResponse.body;
+    const customerResponse = await request(app)
+      .post('/api/customers')
+      .set('Authorization', `Bearer ${token}`)
+      .send({
+        code: `TEST-LOW-CUST-${Date.now()}`,
+        name: 'Low Stock Customer',
+        phone: '9876543210',
+        email: 'low@test.com'
+      });
 
-  const orderResponse = await request(app)
-    .post('/api/sales-orders')
-    .send({
-      customerId: testCustomer.id,
-      items: [
-        {
-          productId: lowStockProduct.id,
-          quantity: 5,
-          rate: 100
-        }
-      ]
-    });
+    expect(customerResponse.status).toBe(201);
 
-  expect(orderResponse.status).toBe(400);
-  expect(orderResponse.body.message).toMatch(/stock|available|insufficient/i);
-});
+    const testCustomer = customerResponse.body;
+
+    const orderResponse = await request(app)
+      .post('/api/sales-orders')
+      .set('Authorization', `Bearer ${token}`)
+      .send({
+        customerId: testCustomer.id,
+        items: [
+          {
+            productId: lowStockProduct.id,
+            quantity: 5,
+            rate: 100
+          }
+        ]
+      });
+
+    expect(orderResponse.status).toBe(400);
+    expect(orderResponse.body.message).toMatch(/stock|available|insufficient/i);
+  });
 });

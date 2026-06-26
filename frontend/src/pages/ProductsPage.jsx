@@ -32,7 +32,7 @@ function ProductsPage() {
       setError(
         err.message || "Failed to load products"
       );
-    } finally {
+    } finally {``
       setLoading(false);
     }
   }
@@ -170,7 +170,7 @@ function ProductsPage() {
                               e.stopPropagation();
 
                               navigate(
-                                `/products/edit/${product.id}`
+                                `/products/${product.id}/edit}`
                               );
                             }}
                             className="w-full px-4 py-3 text-left text-sm font-medium text-black hover:bg-gray-100"

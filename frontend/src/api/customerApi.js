@@ -2,13 +2,17 @@ const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL;
 
 async function handleResponse(response) {
+  if (response.status === 204) {
+    return null;
+  }
+
   const data = await response
     .json()
     .catch(() => null);
 
   if (!response.ok) {
     throw new Error(
-      data?.message || "Request failed"
+      data?.message || 'Request failed'
     );
   }
 
@@ -35,12 +39,12 @@ export async function createCustomer(customer) {
   const response = await fetch(
     `${API_BASE_URL}/api/customers`,
     {
-      method: "POST",
+      method: 'POST',
       headers: {
-        "Content-Type":
-          "application/json",
+        'Content-Type':
+          'application/json'
       },
-      body: JSON.stringify(customer),
+      body: JSON.stringify(customer)
     }
   );
 
@@ -54,12 +58,12 @@ export async function updateCustomer(
   const response = await fetch(
     `${API_BASE_URL}/api/customers/${id}`,
     {
-      method: "PUT",
+      method: 'PATCH',
       headers: {
-        "Content-Type":
-          "application/json",
+        'Content-Type':
+          'application/json'
       },
-      body: JSON.stringify(customer),
+      body: JSON.stringify(customer)
     }
   );
 
@@ -70,7 +74,7 @@ export async function deleteCustomer(id) {
   const response = await fetch(
     `${API_BASE_URL}/api/customers/${id}`,
     {
-      method: "DELETE",
+      method: 'DELETE'
     }
   );
 
