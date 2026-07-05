@@ -1,0 +1,11 @@
+[33mcommit 2e4757f9faaa5f2055566fdcfc6aa585952ecdc5[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mfeature/day17-ci[m[33m)[m
+Author: Harini <harini4243@gmail.com>
+Date:   Sun Jul 5 17:25:09 2026 +0530
+
+    Fix: remove large zip files and add workflow
+
+[33mcommit 43b9b714ba3c2a287c2cd3cd09bc285532866346[m
+Author: Harini <harini4243@gmail.com>
+Date:   Wed Jul 1 22:54:35 2026 +0530
+
+    Working project after authentication fixes
