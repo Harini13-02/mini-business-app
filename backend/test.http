@@ -1,19 +1,60 @@
-@baseUrl = http://localhost:3000
+@baseUrl = http://localhost:5000
 
-### Health check
+##################################################
+# HEALTH CHECK
+##################################################
+
+### Health Check
 GET {{baseUrl}}/health
+
+##################################################
+# AUTH API
+##################################################
+
+### Register Sales User
+POST {{baseUrl}}/api/auth/register
+Content-Type: application/json
+
+{
+  "name": "Harini",
+  "email": "harini@gmail.com",
+  "password": "harini123"
+}
+
+### Login (Copy token from response)
+# @name login
+
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "harini@gmail.com",
+  "password": "harini123"
+}
+
+###
+
+@token = {{login.response.body.token}}
+
+##################################################
+# PRODUCT API
+##################################################
 
 ### Get all products
 GET {{baseUrl}}/api/products
+Authorization: Bearer {{token}}
 
 ### Get product by valid ID
 GET {{baseUrl}}/api/products/1
+Authorization: Bearer {{token}}
 
 ### Get product by invalid ID
 GET {{baseUrl}}/api/products/999
+Authorization: Bearer {{token}}
 
 ### Create product
 POST {{baseUrl}}/api/products
+Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
@@ -25,6 +66,7 @@ Content-Type: application/json
 
 ### Create product with missing field
 POST {{baseUrl}}/api/products
+Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
@@ -33,8 +75,9 @@ Content-Type: application/json
   "stockQty": 50
 }
 
-### Create product with duplicate SKU
+### Create duplicate product
 POST {{baseUrl}}/api/products
+Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
@@ -43,3 +86,212 @@ Content-Type: application/json
   "price": 60,
   "stockQty": 25
 }
+
+##################################################
+# CUSTOMER API
+##################################################
+
+### Create Customer
+POST {{baseUrl}}/api/customers
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "code": "C003",
+  "name": "ABC Stores",
+  "phone": "9876543210",
+  "email": "accounts@abcstores.com"
+}
+
+### List Customers
+GET {{baseUrl}}/api/customers
+Authorization: Bearer {{token}}
+
+### Get Customer By ID
+GET {{baseUrl}}/api/customers/1
+Authorization: Bearer {{token}}
+
+### Get Invalid Customer
+GET {{baseUrl}}/api/customers/999
+Authorization: Bearer {{token}}
+
+### Create Duplicate Customer
+POST {{baseUrl}}/api/customers
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "code": "C001",
+  "name": "Duplicate Customer"
+}
+
+### Create Customer Missing Name
+POST {{baseUrl}}/api/customers
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "code": "C002"
+}
+
+### Create Another Customer
+POST {{baseUrl}}/api/customers
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "code": "C002",
+  "name": "XYZ Traders",
+  "phone": "9123456780",
+  "email": "contact@xyztraders.com"
+}
+
+### Update Customer
+PATCH {{baseUrl}}/api/customers/1
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "code": "C001",
+  "name": "ABC Stores Updated",
+  "phone": "9876543210",
+  "email": "admin@abcstores.com"
+}
+
+### Delete Customer
+DELETE {{baseUrl}}/api/customers/1
+Authorization: Bearer {{token}}
+
+### Verify Customers
+GET {{baseUrl}}/api/customers
+Authorization: Bearer {{token}}
+
+##################################################
+# SALES ORDER API
+##################################################
+
+### List Sales Orders
+GET {{baseUrl}}/api/sales-orders
+Authorization: Bearer {{token}}
+
+### Get Sales Order
+GET {{baseUrl}}/api/sales-orders/1
+Authorization: Bearer {{token}}
+
+### Invalid Sales Order
+GET {{baseUrl}}/api/sales-orders/999
+Authorization: Bearer {{token}}
+
+### Create Valid Sales Order
+POST {{baseUrl}}/api/sales-orders
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "customerId": 1,
+  "items": [
+    {
+      "productId": 1,
+      "quantity": 2,
+      "rate": 50
+    },
+    {
+      "productId": 2,
+      "quantity": 3,
+      "rate": 10
+    }
+  ]
+}
+
+### Missing Customer
+POST {{baseUrl}}/api/sales-orders
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "items": [
+    {
+      "productId": 1,
+      "quantity": 2,
+      "rate": 50
+    }
+  ]
+}
+
+### Empty Items
+POST {{baseUrl}}/api/sales-orders
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "customerId": 1,
+  "items": []
+}
+
+### Invalid Product
+POST {{baseUrl}}/api/sales-orders
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "customerId": 1,
+  "items": [
+    {
+      "productId": 999,
+      "quantity": 2,
+      "rate": 50
+    }
+  ]
+}
+
+### Invalid Quantity
+POST {{baseUrl}}/api/sales-orders
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "customerId": 1,
+  "items": [
+    {
+      "productId": 1,
+      "quantity": 0,
+      "rate": 50
+    }
+  ]
+}
+
+### Invalid Rate
+POST {{baseUrl}}/api/sales-orders
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "customerId": 1,
+  "items": [
+    {
+      "productId": 1,
+      "quantity": 2,
+      "rate": 0
+    }
+  ]
+}
+
+### Customer Not Found
+POST {{baseUrl}}/api/sales-orders
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "customerId": 999,
+  "items": [
+    {
+      "productId": 1,
+      "quantity": 2,
+      "rate": 50
+    }
+  ]
+}
+
+### Confirm Sales Order
+POST {{baseUrl}}/api/sales-orders/1/confirm
+Authorization: Bearer {{token}}
