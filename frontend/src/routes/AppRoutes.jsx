@@ -1,5 +1,7 @@
 import { Routes, Route } from 'react-router-dom';
 
+import ProtectedRoute from './ProtectedRoute';
+
 import DashboardPage from '../pages/DashboardPage';
 import ProductsPage from '../pages/ProductsPage';
 import ProductFormPage from '../pages/ProductFormPage';
@@ -13,21 +15,99 @@ import LoginPage from '../pages/LoginPage';
 function AppRoutes() {
   return (
     <Routes>
+      {/* Public Route */}
       <Route path="/login" element={<LoginPage />} />
 
-      <Route path="/" element={<DashboardPage />} />
+      {/* Protected Routes */}
+      <Route
+        path="/"
+        element={
+          <ProtectedRoute>
+            <DashboardPage />
+          </ProtectedRoute>
+        }
+      />
 
-      <Route path="/products" element={<ProductsPage />} />
-      <Route path="/products/new" element={<ProductFormPage />} />
-      <Route path="/products/edit/:id" element={<ProductFormPage />} />
+      <Route
+        path="/products"
+        element={
+          <ProtectedRoute>
+            <ProductsPage />
+          </ProtectedRoute>
+        }
+      />
 
-      <Route path="/customers" element={<CustomersPage />} />
-      <Route path="/customers/new" element={<CustomerFormPage />} />
-      <Route path="/customers/edit/:id" element={<CustomerFormPage />} />
+      <Route
+        path="/products/new"
+        element={
+          <ProtectedRoute>
+            <ProductFormPage />
+          </ProtectedRoute>
+        }
+      />
 
-      <Route path="/sales-orders" element={<SalesOrdersPage />} />
-      <Route path="/sales-orders/new" element={<SalesOrderCreatePage />} />
-      <Route path="/sales-orders/:id" element={<SalesOrderDetailPage />} />
+      <Route
+        path="/products/edit/:id"
+        element={
+          <ProtectedRoute>
+            <ProductFormPage />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/customers"
+        element={
+          <ProtectedRoute>
+            <CustomersPage />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/customers/new"
+        element={
+          <ProtectedRoute>
+            <CustomerFormPage />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/customers/edit/:id"
+        element={
+          <ProtectedRoute>
+            <CustomerFormPage />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/sales-orders"
+        element={
+          <ProtectedRoute>
+            <SalesOrdersPage />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/sales-orders/new"
+        element={
+          <ProtectedRoute>
+            <SalesOrderCreatePage />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/sales-orders/:id"
+        element={
+          <ProtectedRoute>
+            <SalesOrderDetailPage />
+          </ProtectedRoute>
+        }
+      />
     </Routes>
   );
 }

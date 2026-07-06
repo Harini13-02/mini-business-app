@@ -1,9 +1,15 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { loginUser } from "../api/authApi";
+import { useNavigate, Navigate } from "react-router-dom";
+import { login } from "../api/authApi";
 
 function LoginPage() {
   const navigate = useNavigate();
+
+  // Prevent logged-in users from seeing the login page
+  const token = localStorage.getItem("token");
+  if (token) {
+    return <Navigate to="/" replace />;
+  }
 
   const [form, setForm] = useState({
     email: "",
@@ -11,69 +17,91 @@ function LoginPage() {
   });
 
   const [error, setError] = useState("");
+  const [saving, setSaving] = useState(false);
 
-  function handleChange(e) {
-    setForm({
-      ...form,
-      [e.target.name]: e.target.value,
-    });
+  function handleChange(event) {
+    const { name, value } = event.target;
+
+    setForm((previousForm) => ({
+      ...previousForm,
+      [name]: value,
+    }));
   }
 
-  async function handleSubmit(e) {
-    e.preventDefault();
+  async function handleSubmit(event) {
+    event.preventDefault();
+
+    setError("");
 
     try {
-      const result = await loginUser(form);
+      setSaving(true);
+
+      const result = await login(form);
 
       localStorage.setItem("token", result.token);
       localStorage.setItem("user", JSON.stringify(result.user));
 
       navigate("/");
     } catch (err) {
-      setError(err.message);
+      setError(err.message || "Login failed");
+    } finally {
+      setSaving(false);
     }
   }
 
   return (
-    <div className="max-w-md mx-auto bg-white rounded-lg shadow-md p-6">
-      <h1 className="text-2xl font-bold mb-6">Login</h1>
+    <div className="mx-auto mt-20 max-w-md rounded-lg bg-white p-8 shadow-lg">
+      <h1 className="text-2xl font-bold text-center text-gray-800">
+        Login
+      </h1>
+
+      <p className="mt-2 text-center text-gray-500">
+        Sign in to access the Mini Business Operations App
+      </p>
 
       {error && (
-        <div className="text-red-600 mb-4">
+        <div className="mt-4 rounded-md bg-red-100 border border-red-300 p-3 text-red-700">
           {error}
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="mt-6 space-y-4">
         <div>
-          <label>Email</label>
+          <label className="mb-1 block text-sm font-medium text-gray-700">
+            Email
+          </label>
+
           <input
-            className="w-full border rounded p-2"
             type="email"
             name="email"
             value={form.email}
             onChange={handleChange}
             required
+            className="w-full rounded-md border border-gray-300 p-2 focus:border-violet-500 focus:outline-none"
           />
         </div>
 
         <div>
-          <label>Password</label>
+          <label className="mb-1 block text-sm font-medium text-gray-700">
+            Password
+          </label>
+
           <input
-            className="w-full border rounded p-2"
             type="password"
             name="password"
             value={form.password}
             onChange={handleChange}
             required
+            className="w-full rounded-md border border-gray-300 p-2 focus:border-violet-500 focus:outline-none"
           />
         </div>
 
         <button
           type="submit"
-          className="bg-violet-700 text-white px-4 py-2 rounded"
+          disabled={saving}
+          className="w-full rounded-md bg-violet-700 py-2 font-semibold text-white hover:bg-violet-800 disabled:opacity-50"
         >
-          Login
+          {saving ? "Signing In..." : "Login"}
         </button>
       </form>
     </div>
