@@ -1,24 +1,24 @@
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route } from "react-router-dom";
 
-import ProtectedRoute from './ProtectedRoute';
+import ProtectedRoute from "./ProtectedRoute";
 
-import DashboardPage from '../pages/DashboardPage';
-import ProductsPage from '../pages/ProductsPage';
-import ProductFormPage from '../pages/ProductFormPage';
-import CustomersPage from '../pages/CustomersPage';
-import CustomerFormPage from '../pages/CustomerFormPage';
-import SalesOrdersPage from '../pages/SalesOrdersPage';
-import SalesOrderCreatePage from '../pages/SalesOrderCreatePage';
-import SalesOrderDetailPage from '../pages/SalesOrderDetailPage';
-import LoginPage from '../pages/LoginPage';
+import DashboardPage from "../pages/DashboardPage";
+import ProductsPage from "../pages/ProductsPage";
+import ProductFormPage from "../pages/ProductFormPage";
+import CustomersPage from "../pages/CustomersPage";
+import CustomerFormPage from "../pages/CustomerFormPage";
+import SalesOrdersPage from "../pages/SalesOrdersPage";
+import SalesOrderCreatePage from "../pages/SalesOrderCreatePage";
+import SalesOrderDetailPage from "../pages/SalesOrderDetailPage";
+import LoginPage from "../pages/LoginPage";
 
 function AppRoutes() {
   return (
     <Routes>
-      {/* Public Route */}
+      {/* Public */}
       <Route path="/login" element={<LoginPage />} />
 
-      {/* Protected Routes */}
+      {/* Protected */}
       <Route
         path="/"
         element={

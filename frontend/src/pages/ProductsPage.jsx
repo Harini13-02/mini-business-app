@@ -32,7 +32,7 @@ function ProductsPage() {
       setError(
         err.message || "Failed to load products"
       );
-    } finally {``
+    } finally {
       setLoading(false);
     }
   }
@@ -90,7 +90,7 @@ function ProductsPage() {
 
         <Link
           to="/products/new"
-          className="rounded-md bg-gray-900 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-black transition"
+          className="rounded-md bg-gray-900 px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-black"
         >
           Add Product
         </Link>
@@ -170,7 +170,7 @@ function ProductsPage() {
                               e.stopPropagation();
 
                               navigate(
-                                `/products/${product.id}/edit}`
+                                `/products/edit/${product.id}`
                               );
                             }}
                             className="w-full px-4 py-3 text-left text-sm font-medium text-black hover:bg-gray-100"

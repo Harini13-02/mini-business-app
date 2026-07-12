@@ -134,7 +134,13 @@ function SalesOrderCreatePage() {
   return (
     <div>
       <div className="mb-4">
-        <h2 className="text-lg font-semibold text-gray-900">
+        <h2
+            style={{
+              color: "#000000",
+              fontSize: "32px",
+              fontWeight: "bold",
+            }}
+          >
           Create Sales Order
         </h2>
 

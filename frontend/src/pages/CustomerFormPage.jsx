@@ -219,19 +219,22 @@ function CustomerFormPage() {
           )}
 
           <div>
-            <label>
+            <label className="mb-2 block text-sm font-semibold text-gray-700">
               Customer Code
             </label>
 
-            <input
-              name="code"
-              value={form.code}
-              onChange={
-                handleChange
-              }
-               placeholder="Example: C001"
-              className="w-full rounded-md border px-3 py-2"
-            />
+           <input
+  name="code"
+  value={form.code}
+  onChange={handleChange}
+  disabled={isEditMode}
+  placeholder="Example: C001"
+  className={`w-full rounded-md border px-3 py-2 ${
+    isEditMode
+      ? "bg-gray-100 text-gray-500 cursor-not-allowed"
+      : ""
+  }`}
+/>
 
             {fieldErrors.code && (
               <p className="text-sm text-red-600">
@@ -243,7 +246,7 @@ function CustomerFormPage() {
           </div>
 
           <div>
-            <label>
+            <label className="mb-2 block text-sm font-semibold text-gray-700">
               Customer Name
             </label>
 
@@ -267,7 +270,7 @@ function CustomerFormPage() {
           </div>
 
           <div>
-            <label>Phone</label>
+            <label className="mb-2 block text-sm font-semibold text-gray-700">Phone</label>
 
             <input
               name="phone"
@@ -289,7 +292,7 @@ function CustomerFormPage() {
           </div>
 
           <div>
-            <label>Email</label>
+            <label className="mb-2 block text-sm font-semibold text-gray-700">Email</label>
 
             <input
               name="email"

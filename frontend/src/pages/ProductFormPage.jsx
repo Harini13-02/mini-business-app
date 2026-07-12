@@ -32,13 +32,11 @@ function validateProductForm(form) {
   }
 
   if (Number(form.price) <= 0) {
-    errors.price =
-      "Price must be greater than zero";
+    errors.price = "Price must be greater than zero";
   }
 
   if (Number(form.stockQty) < 0) {
-    errors.stockQty =
-      "Opening stock cannot be negative";
+    errors.stockQty = "Opening stock cannot be negative";
   }
 
   return errors;
@@ -46,50 +44,32 @@ function validateProductForm(form) {
 
 function ProductFormPage() {
   const navigate = useNavigate();
-
   const { id } = useParams();
 
   const isEditMode = Boolean(id);
 
-  const [form, setForm] =
-    useState(initialForm);
-
-  const [fieldErrors, setFieldErrors] =
-    useState({});
-
-  const [submitError, setSubmitError] =
-    useState("");
-
-  const [saving, setSaving] =
-    useState(false);
-
-  const [loading, setLoading] =
-    useState(isEditMode);
+  const [form, setForm] = useState(initialForm);
+  const [fieldErrors, setFieldErrors] = useState({});
+  const [submitError, setSubmitError] = useState("");
+  const [saving, setSaving] = useState(false);
+  const [loading, setLoading] = useState(isEditMode);
 
   useEffect(() => {
-    if (!isEditMode) {
-      return;
-    }
+    if (!isEditMode) return;
 
     async function loadProduct() {
       try {
-        const product =
-          await getProductById(id);
+        const product = await getProductById(id);
 
         setForm({
           sku: product.sku || "",
           name: product.name || "",
-          price:
-            product.price?.toString() ||
-            "",
-          stockQty:
-            product.stockQty?.toString() ||
-            "",
+          price: product.price?.toString() || "",
+          stockQty: product.stockQty?.toString() || "",
         });
       } catch (error) {
         setSubmitError(
-          error.message ||
-            "Failed to load product"
+          error.message || "Failed to load product"
         );
       } finally {
         setLoading(false);
@@ -100,8 +80,7 @@ function ProductFormPage() {
   }, [id, isEditMode]);
 
   function handleChange(event) {
-    const { name, value } =
-      event.target;
+    const { name, value } = event.target;
 
     setForm((previousForm) => ({
       ...previousForm,
@@ -114,14 +93,10 @@ function ProductFormPage() {
 
     setSubmitError("");
 
-    const errors =
-      validateProductForm(form);
-
+    const errors = validateProductForm(form);
     setFieldErrors(errors);
 
-    if (
-      Object.keys(errors).length > 0
-    ) {
+    if (Object.keys(errors).length > 0) {
       return;
     }
 
@@ -136,21 +111,15 @@ function ProductFormPage() {
       setSaving(true);
 
       if (isEditMode) {
-        await updateProduct(
-          id,
-          payload
-        );
+        await updateProduct(id, payload);
       } else {
-        await createProduct(
-          payload
-        );
+        await createProduct(payload);
       }
 
       navigate("/products");
     } catch (error) {
       setSubmitError(
-        error.message ||
-          "Failed to save product"
+        error.message || "Failed to save product"
       );
     } finally {
       setSaving(false);
@@ -159,15 +128,19 @@ function ProductFormPage() {
 
   if (loading) {
     return (
-      <p>Loading product...</p>
+      <div className="text-center text-gray-600 py-10">
+        Loading product...
+      </div>
     );
   }
 
   return (
     <div className="space-y-6">
+
+      {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2
+          <h1
             style={{
               color: "#000000",
               fontSize: "32px",
@@ -175,36 +148,40 @@ function ProductFormPage() {
             }}
           >
             {isEditMode
-              ? "Edit Product"
+              ? "Update Product"
               : "Add Product"}
-          </h2>
+          </h1>
 
-          <p className="text-sm text-gray-500">
-            Product master data
+          <p className="mt-1 text-sm text-gray-600">
+            {isEditMode
+              ? "Update product information."
+              : "Create a new product."}
           </p>
         </div>
 
         <Link
           to="/products"
-          className="rounded-md border px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100"
+          className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 transition"
         >
-          Back to Products
+          Back
         </Link>
       </div>
 
       <Card>
         <form
           onSubmit={handleSubmit}
-          className="space-y-4"
+          className="space-y-5"
         >
-          {submitError ? (
+          {submitError && (
             <div className="rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
               {submitError}
             </div>
-          ) : null}
+          )}
+
+          {/* SKU */}
 
           <div>
-            <label className="mb-1 block text-sm font-medium text-gray-700">
+            <label className="mb-2 block text-sm font-semibold text-gray-700">
               SKU
             </label>
 
@@ -212,83 +189,97 @@ function ProductFormPage() {
               name="sku"
               value={form.sku}
               onChange={handleChange}
-              className="w-full rounded-md border px-3 py-2 text-sm"
+              disabled={isEditMode}
               placeholder="Example: P001"
+              className={`w-full rounded-lg border px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-violet-400 ${
+                isEditMode
+                  ? "bg-gray-100 text-gray-500 cursor-not-allowed"
+                  : ""
+              }`}
             />
 
-            {fieldErrors.sku ? (
+            {fieldErrors.sku && (
               <p className="mt-1 text-sm text-red-600">
                 {fieldErrors.sku}
               </p>
-            ) : null}
+            )}
           </div>
 
+          {/* Product Name */}
+
           <div>
-            <label className="mb-1 block text-sm font-medium text-gray-700">
-              Name
+            <label className="mb-2 block text-sm font-semibold text-gray-700">
+              Product Name
             </label>
 
             <input
               name="name"
               value={form.name}
               onChange={handleChange}
-              className="w-full rounded-md border px-3 py-2 text-sm"
-              placeholder="Example: Notebook"
+              placeholder="Enter Product Name"
+              className="w-full rounded-lg border px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-violet-400"
             />
 
-            {fieldErrors.name ? (
+            {fieldErrors.name && (
               <p className="mt-1 text-sm text-red-600">
                 {fieldErrors.name}
               </p>
-            ) : null}
+            )}
           </div>
 
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+          {/* Price & Stock */}
+
+          <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+
             <div>
-              <label className="mb-1 block text-sm font-medium text-gray-700">
+              <label className="mb-2 block text-sm font-semibold text-gray-700">
                 Price
               </label>
 
               <input
-                name="price"
                 type="number"
+                name="price"
                 value={form.price}
                 onChange={handleChange}
-                className="w-full rounded-md border px-3 py-2 text-sm"
+                className="w-full rounded-lg border px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-violet-400"
               />
 
-              {fieldErrors.price ? (
+              {fieldErrors.price && (
                 <p className="mt-1 text-sm text-red-600">
                   {fieldErrors.price}
                 </p>
-              ) : null}
+              )}
             </div>
 
             <div>
-              <label className="mb-1 block text-sm font-medium text-gray-700">
+              <label className="mb-2 block text-sm font-semibold text-gray-700">
                 Opening Stock
               </label>
 
               <input
-                name="stockQty"
                 type="number"
+                name="stockQty"
                 value={form.stockQty}
                 onChange={handleChange}
-                className="w-full rounded-md border px-3 py-2 text-sm"
+                className="w-full rounded-lg border px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-violet-400"
               />
 
-              {fieldErrors.stockQty ? (
+              {fieldErrors.stockQty && (
                 <p className="mt-1 text-sm text-red-600">
                   {fieldErrors.stockQty}
                 </p>
-              ) : null}
+              )}
             </div>
+
           </div>
 
-          <div className="flex items-center justify-end gap-3 border-t pt-4">
+          {/* Buttons */}
+
+          <div className="flex justify-end gap-3 border-t pt-5">
+
             <Link
               to="/products"
-              className="rounded-md border px-4 py-2 text-sm"
+              className="rounded-md border border-gray-300 px-5 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 transition"
             >
               Cancel
             </Link>
@@ -296,7 +287,7 @@ function ProductFormPage() {
             <button
               type="submit"
               disabled={saving}
-              className="rounded-md bg-gray-900 px-4 py-2 text-sm text-white"
+              className="rounded-md bg-violet-700 px-5 py-2 text-sm font-medium text-white hover:bg-violet-800 transition"
             >
               {saving
                 ? "Saving..."
@@ -304,7 +295,9 @@ function ProductFormPage() {
                 ? "Update Product"
                 : "Save Product"}
             </button>
+
           </div>
+
         </form>
       </Card>
     </div>
