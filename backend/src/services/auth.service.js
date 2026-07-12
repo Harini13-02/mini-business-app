@@ -23,16 +23,14 @@ function createToken(user) {
 }
 
 async function registerUser(data) {
-  const { name, email, password } = data;
-
-  if (!name || !email || !password) {
+  if (!data.name || !data.email || !data.password) {
     throw createAppError(
       'Name, email, and password are required',
       400
     );
   }
 
-  if (password.length < 6) {
+  if (data.password.length < 6) {
     throw createAppError(
       'Password must be at least 6 characters',
       400
@@ -41,7 +39,7 @@ async function registerUser(data) {
 
   const existingUser = await prisma.user.findUnique({
     where: {
-      email,
+      email: data.email,
     },
   });
 
@@ -49,12 +47,12 @@ async function registerUser(data) {
     throw createAppError('Email already exists', 400);
   }
 
-  const passwordHash = await bcrypt.hash(password, 10);
+  const passwordHash = await bcrypt.hash(data.password, 10);
 
   const user = await prisma.user.create({
     data: {
-      name,
-      email,
+      name: data.name,
+      email: data.email,
       passwordHash,
       role: 'SALES_USER',
     },
@@ -69,9 +67,7 @@ async function registerUser(data) {
 }
 
 async function loginUser(data) {
-  const { email, password } = data;
-
-  if (!email || !password) {
+  if (!data.email || !data.password) {
     throw createAppError(
       'Email and password are required',
       400
@@ -80,21 +76,27 @@ async function loginUser(data) {
 
   const user = await prisma.user.findUnique({
     where: {
-      email,
+      email: data.email,
     },
   });
 
   if (!user) {
-    throw createAppError('Invalid credentials', 401);
+    throw createAppError(
+      'Invalid credentials',
+      401
+    );
   }
 
   const passwordMatches = await bcrypt.compare(
-    password,
+    data.password,
     user.passwordHash
   );
 
   if (!passwordMatches) {
-    throw createAppError('Invalid credentials', 401);
+    throw createAppError(
+      'Invalid credentials',
+      401
+    );
   }
 
   const token = createToken(user);

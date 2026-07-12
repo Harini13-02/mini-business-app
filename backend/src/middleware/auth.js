@@ -12,7 +12,10 @@ function auth(req, res, next) {
   const token = authHeader.replace('Bearer ', '');
 
   try {
-    const payload = jwt.verify(token, process.env.JWT_SECRET);
+    const payload = jwt.verify(
+      token,
+      process.env.JWT_SECRET
+    );
 
     req.user = payload;
 
