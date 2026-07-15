@@ -100,7 +100,13 @@ function SalesOrderDetailPage() {
     <div className="space-y-4">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h2 className="text-lg font-semibold text-gray-900">
+          <h2
+            style={{
+              color: "#000000",
+              fontSize: "32px",
+              fontWeight: "bold",
+            }}
+          >
             Sales Order {order.orderNo}
           </h2>
 

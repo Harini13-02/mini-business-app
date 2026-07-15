@@ -51,7 +51,13 @@ function LoginPage() {
 
   return (
     <div className="mx-auto mt-20 max-w-md rounded-lg bg-white p-8 shadow-lg">
-      <h1 className="text-2xl font-bold text-center text-gray-800">
+       <h1
+            style={{
+              color: "#000000",
+              fontSize: "32px",
+              fontWeight: "bold",
+            }}
+          >
         Login
       </h1>
 
