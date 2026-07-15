@@ -7,7 +7,7 @@ const requireRole = require('../middleware/requireRole');
 
 const router = express.Router();
 
-// View all customers (ADMIN & SALES_USER)
+// View all customers
 router.get(
   '/',
   auth,
@@ -15,7 +15,7 @@ router.get(
   customerController.listCustomers
 );
 
-// View single customer (ADMIN & SALES_USER)
+// View single customer
 router.get(
   '/:id',
   auth,
@@ -23,27 +23,27 @@ router.get(
   customerController.getCustomer
 );
 
-// Create customer (ADMIN only)
+// Create customer
 router.post(
   '/',
   auth,
-  requireRole('ADMIN'),
+  requireRole('ADMIN', 'SALES_USER'),
   customerController.createCustomer
 );
 
-// Update customer (ADMIN only)
+// Update customer
 router.patch(
   '/:id',
   auth,
-  requireRole('ADMIN'),
+  requireRole('ADMIN', 'SALES_USER'),
   customerController.updateCustomer
 );
 
-// Delete customer (ADMIN only)
+// Delete customer
 router.delete(
   '/:id',
   auth,
-  requireRole('ADMIN'),
+  requireRole('ADMIN', 'SALES_USER'),
   customerController.deleteCustomer
 );
 
