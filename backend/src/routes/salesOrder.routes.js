@@ -7,7 +7,7 @@ const requireRole = require('../middleware/requireRole');
 
 const router = express.Router();
 
-// View all sales orders (ADMIN & SALES_USER)
+// View all sales orders
 router.get(
   '/',
   auth,
@@ -15,7 +15,7 @@ router.get(
   salesOrderController.listSalesOrders
 );
 
-// View single sales order (ADMIN & SALES_USER)
+// View single sales order
 router.get(
   '/:id',
   auth,
@@ -23,7 +23,7 @@ router.get(
   salesOrderController.getSalesOrder
 );
 
-// Create sales order (ADMIN & SALES_USER)
+// Create sales order
 router.post(
   '/',
   auth,
@@ -31,11 +31,11 @@ router.post(
   salesOrderController.createSalesOrder
 );
 
-// Confirm sales order (ADMIN only)
+// Confirm sales order
 router.post(
   '/:id/confirm',
   auth,
-  requireRole('ADMIN'),
+  requireRole('ADMIN', 'SALES_USER'),
   salesOrderController.confirmSalesOrder
 );
 
