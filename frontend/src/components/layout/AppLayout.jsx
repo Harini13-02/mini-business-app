@@ -1,16 +1,23 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 
 function AppLayout({ children }) {
- const linkClass = ({ isActive }) =>
-  `px-5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300 ${
-    isActive
-      ? "bg-white text-violet-900 shadow-lg"
-      : "text-white hover:bg-white/15 hover:text-white"
-  }`;
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    navigate("/login", { replace: true });
+  };
+
+  const linkClass = ({ isActive }) =>
+    `px-5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300 ${
+      isActive
+        ? "bg-white text-violet-900 shadow-lg"
+        : "text-white hover:bg-white/15 hover:text-white"
+    }`;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#f8f4ff] via-[#faf7ff] to-[#efe5ff]">
-      
       {/* Header */}
       <header className="sticky top-0 z-50">
         <div
@@ -25,7 +32,6 @@ function AppLayout({ children }) {
           "
         >
           <div className="max-w-7xl mx-auto px-8 py-6 flex items-center justify-between">
-            
             {/* Logo */}
             <div>
               <h1 className="text-3xl font-bold text-white tracking-tight">
@@ -37,23 +43,33 @@ function AppLayout({ children }) {
               </p>
             </div>
 
-            {/* Navigation */}
-            <nav className="flex gap-3">
-              <NavLink to="/" className={linkClass}>
-                Dashboard
-              </NavLink>
+            {/* Navigation + Logout */}
+            <div className="flex items-center gap-4">
+              <nav className="flex gap-3">
+                <NavLink to="/" className={linkClass}>
+                  Dashboard
+                </NavLink>
 
-              <NavLink to="/products" className={linkClass}>
-                Products
-              </NavLink>
-              <NavLink to="/customers" className={linkClass}>
-               Customers
-              </NavLink>
-              <NavLink to="/sales-orders" className={linkClass}>
-                Sales Orders
-              </NavLink>
+                <NavLink to="/products" className={linkClass}>
+                  Products
+                </NavLink>
 
-            </nav>
+                <NavLink to="/customers" className={linkClass}>
+                  Customers
+                </NavLink>
+
+                <NavLink to="/sales-orders" className={linkClass}>
+                  Sales Orders
+                </NavLink>
+              </nav>
+
+              <button
+                onClick={handleLogout}
+                className="rounded-xl bg-red-600 px-5 py-2.5 text-sm font-semibold text-white transition-all duration-300 hover:bg-red-700 hover:shadow-lg"
+              >
+                Logout
+              </button>
+            </div>
           </div>
         </div>
       </header>
